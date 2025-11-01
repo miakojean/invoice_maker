@@ -1,7 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200..800&display=swap');
 @import "tailwindcss";
+@plugin "daisyui";
 
 *{
   box-sizing: border-box;
   font-family: 'Inter';
+}
+
+@utility input{
+  @apply outline-0;
 }
