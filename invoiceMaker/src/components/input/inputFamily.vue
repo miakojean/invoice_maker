@@ -1,14 +1,12 @@
 <template>
-  <div class="w-full flex flex-col gap-2">
-    <label for="">Nom complet du client</label>
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">{{ label }}</legend>
     <input 
-      type="text" 
+      :type="inputType" 
       class="input" 
-      placeholder="Entrer le nom complet de votre client"
-      :value="modelValue"
-      @input="updateValue($event)"
+      :placeholder="placeholder"
     />
-  </div>
+  </fieldset>
 </template>
 
 <script lang="ts">
@@ -21,6 +19,17 @@ export default defineComponent({
     modelValue: {
       type: String,
       default: ''
+    },
+    label:{
+      type:String,
+      default:"Nom complet du client",
+    },
+    placeholder:{
+      type:String,
+    },
+    inputType:{
+      type:String,
+      default:"text"
     }
   },
 

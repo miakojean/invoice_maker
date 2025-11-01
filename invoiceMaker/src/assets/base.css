@@ -9,4 +9,9 @@
 
 @utility input{
   @apply outline-0;
+  @apply border;
+}
+
+@utility label{
+  @apply text-xs;
 }

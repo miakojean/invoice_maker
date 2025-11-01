@@ -6,118 +6,78 @@
       <form class="w-full grid grid-cols-1 md:grid-cols-2 gap-8" @submit.prevent="generateInvoice">
         
         <!-- Informations du client -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
+        <div class="bg-white p-6 rounded-lg shadow-sm">
           <h3 class="text-xl font-semibold mb-4 text-gray-700">Informations du client</h3>
           <div class="space-y-4">
-            <div>
-              <inputFamily 
+            <div class="grid grid-cols-2 gap-4">
+              <inputFamily
+                label="Nom complet client/entreprise"
                 v-model="invoice.client.name"
                 placeholder="John Doe"
                 required
               />
-            </div>
-            <div>
               <inputFamily 
+                label="Email client/entreprise"
                 v-model="invoice.client.email"
                 placeholder="john@example.com"
                 type="email"
               />
             </div>
-            <div>
+            <div class="grid grid-cols-2 gap-4">
               <inputFamily 
+                label="Adresse client/entreprise"
                 v-model="invoice.client.address"
                 placeholder="123 Rue Principale"
               />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <inputFamily 
-                  v-model="invoice.client.phone"
-                  placeholder="+33 1 23 45 67 89"
-                />
-              </div>
-              <div>
-                <inputFamily 
-                  v-model="invoice.client.siret"
-                  placeholder="123 456 789 00012"
-                />
-              </div>
+              <inputFamily
+                label="Numéro de téléphone" 
+                v-model="invoice.client.phone"
+                placeholder="+33 1 23 45 67 89"
+              />
             </div>
           </div>
         </div>
 
         <!-- Informations de la facture -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border">
+        <div class="bg-white p-6 rounded-lg shadow-sm">
+
           <h3 class="text-xl font-semibold mb-4 text-gray-700">Informations de la facture</h3>
+          
           <div class="space-y-4">
+            
             <div class="grid grid-cols-2 gap-4">
-              <div>
-                <inputFamily 
-                  v-model="invoice.invoiceNumber"
-                  placeholder="FACT-2024-001"
-                  required
-                />
-              </div>
-              <div>
-                <input 
-                  v-model="invoice.issueDate"
-                  type="date"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                />
-              </div>
+              <inputSimple placeholder="Votre référence"/>
+              <mainButton/>
             </div>
-            <div>
-              <input 
-                v-model="invoice.dueDate"
-                type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              />
-            </div>
-            <div>
+            <div class="w-full grid grid-cols-2 gap-4">
               <inputFamily 
-                v-model="invoice.subject"
-                placeholder="Prestation de services"
-                required
+                label="Date de prestation" 
+                input-type="date" 
+                v-model="invoice.issueDate"
+              />
+              <inputFamily 
+                label="Date d'envoi" 
+                input-type="date" 
+                v-model="invoice.issueDate"
               />
             </div>
             <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Devise</label>
-                <select 
-                  v-model="invoice.currency"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="EUR">EUR - Euro</option>
-                  <option value="USD">USD - Dollar US</option>
-                  <option value="GBP">GBP - Livre Sterling</option>
-                  <option value="CAD">CAD - Dollar Canadien</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">TVA (%)</label>
-                <input 
-                  v-model.number="invoice.taxRate"
-                  type="number"
-                  min="0"
-                  max="30"
-                  step="0.1"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+              <selectFamily/>
+              <inputSimple input-type="Number" placeholder="Entrer Tva Ex:18"/>
             </div>
           </div>
         </div>
 
         <!-- Articles de la facture -->
-        <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-sm border">
+        <div class="md:col-span-2 bg-white p-6 rounded-lg shadow-sm">
           <h3 class="text-xl font-semibold mb-4 text-gray-700">Articles</h3>
           <div class="space-y-4">
-            <div v-for="(item, index) in invoice.items" :key="index" class="grid grid-cols-12 gap-4 items-end border-b pb-4">
+            <div v-for="(item, index) in invoice.items" :key="index" 
+              class="grid grid-cols-12 gap-4 items-end border-b pb-4">
               <div class="col-span-5">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                <inputFamily 
+                <inputFamily
+                  label="Nom de l'article"
                   v-model="item.description"
                   placeholder="Description de l'article"
                 />
@@ -226,11 +186,17 @@
 <script>
 import { ref, reactive } from 'vue';
 import inputFamily from '@/components/input/inputFamily.vue';
+import mainButton from '../components/button/mainButton.vue';
+import inputSimple from '@/components/input/inputSimple.vue';
+import selectFamily from '@/components/input/selectFamily.vue';
 
 export default {
   name: 'InvoiceGenerator',
   components: {
-    inputFamily
+    inputFamily,
+    inputSimple,
+    selectFamily,
+    mainButton
   },
   setup() {
     const invoice = reactive({
