@@ -12,6 +12,10 @@
   @apply border;
 }
 
+@utility select{
+  @apply outline-0;
+}
+
 @utility label{
   @apply text-xs;
 }
