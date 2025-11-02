@@ -4,13 +4,15 @@
       <!-- En-tête de la facture -->
       <div class="invoice-header text-gray p-8">
         <div class="flex justify-between items-start">
-          <div>
-            <h1 class="text-xl font-bold mb-2">Facture</h1>
+          <div class="flex flex-col gap-1">
+            <h2 class="text-xl font-bold mb-2">Facture</h2>
             <p class="text-gray-400 text-sm">N° <span class="font-mono bg-white/20 px-2 py-1 rounded">{{ invoiceNumber }}</span></p>
+            <p class="text-sm text-gray-600 mt-2">{{ invoiceData.project || 'Projet non spécifié' }}</p>
           </div>
-          <div class="text-right">
+          <div class="text-right flex flex-col gap-1">
             <h2 class="text-xl font-semibold">{{ companyData.companyName || 'Votre entreprise' }}</h2>
             <p class="text-gray-400 text-sm">{{ companyData.email || 'email@entreprise.com' }}</p>
+            <p class="text-gray-400 text-sm">{{ companyData.phone || 'Téléphone non renseigné' }}</p>
           </div>
         </div>
       </div>
@@ -18,18 +20,20 @@
       <!-- Informations client et date -->
       <div class="p-8 border-b border-gray-200">
         <div class="grid grid-cols-2 gap-8">
-          <div>
-            <h3 class="font-semibold text-gray-500 mb-2">client</h3>
+          <div class="flex flex-col gap-2">
+            <h3 class="font-semibold text-gray-500 mb-2">CLIENT</h3>
             <p class="text-lg font-semibold">{{ clientData.clientName || 'Nom du client' }}</p>
             <p class="text-gray-600">{{ clientData.clientEmail || 'email@client.com' }}</p>
             <p class="text-gray-600">{{ clientData.clientAddress || 'Adresse du client' }}</p>
+            <p class="text-gray-600">{{ clientData.clientPhone || 'Téléphone non renseigné' }}</p>
           </div>
+          
           <div class="text-right">
-            <h3 class="font-semibold text-gray-500 mb-2">date</h3>
-            <p class="text-lg">{{ currentDate }}</p>
+            <h3 class="font-semibold text-gray-500 mb-2">DATE</h3>
+            <p class="text-lg">{{ formatDate(invoiceData.issuedDate) || currentDate }}</p>
             <div class="mt-4">
               <h3 class="font-semibold text-gray-500 mb-2">ÉCHÉANCE</h3>
-              <p class="text-lg">{{ dueDate }}</p>
+              <p class="text-lg">{{ formatDate(invoiceData.dueDate) || dueDate }}</p>
             </div>
           </div>
         </div>
@@ -47,15 +51,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in cartItems" :key="index" class="border-b border-gray-100">
-              <td class="py-4">{{ item.name }}</td>
-              <td class="text-center py-4">{{ item.quantity }}</td>
-              <td class="text-right py-4">{{ formatCurrency(item.price) }}</td>
-              <td class="text-right py-4 font-semibold">{{ formatCurrency(item.price * item.quantity) }}</td>
+            <tr v-for="(item, index) in invoiceItems" :key="index" class="border-b border-gray-100">
+              <td class="py-4">{{ item.description || 'Article sans description' }}</td>
+              <td class="text-center py-4">{{ item.quantity || 0 }}</td>
+              <td class="text-right py-4">{{ formatCurrency(item.unitPrice || 0) }}</td>
+              <td class="text-right py-4 font-semibold">{{ formatCurrency((item.unitPrice || 0) * (item.quantity || 0)) }}</td>
             </tr>
             
             <!-- Ligne vide si panier vide -->
-            <tr v-if="cartItems.length === 0">
+            <tr v-if="invoiceItems.length === 0">
               <td colspan="4" class="py-8 text-center text-gray-400">
                 <i class="ri-shopping-cart-2-line text-2xl mb-2 block"></i>
                 Aucun article ajouté
@@ -85,9 +89,26 @@
         </div>
       </div>
 
+      <!-- Notes et informations de paiement -->
+      <div class="p-8 border-t border-gray-200">
+        <div class="grid grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-semibold text-gray-500 mb-2">NOTES</h3>
+            <p class="text-gray-600">{{ notesData.note || 'Aucune note spécifiée' }}</p>
+            <p class="text-gray-600 mt-2">{{ notesData.gstNote || '' }}</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-gray-500 mb-2">INFORMATIONS DE PAIEMENT</h3>
+            <p class="text-gray-600">{{ paymentData.method || 'Méthode non spécifiée' }}</p>
+            <p class="text-gray-600">{{ paymentData.accountName || '' }}</p>
+            <p class="text-gray-600">{{ paymentData.accountNumber || '' }}</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Pied de page -->
       <div class="p-8 bg-gray-100 text-center text-gray-500 text-sm">
-        <p>{{ companyData.phone || 'Tél: 01 23 45 67 89' }} | {{ companyData.address || 'Adresse de votre entreprise' }}</p>
+        <p>{{ companyData.address || 'Adresse de votre entreprise' }} | {{ companyData.website || '' }}</p>
         <p class="mt-2">Merci pour votre confiance !</p>
       </div>
     </div>
@@ -108,9 +129,21 @@ export default {
       type: Object,
       default: () => ({})
     },
-    cartItems: {
+    invoiceData: {
+      type: Object,
+      default: () => ({})
+    },
+    invoiceItems: {
       type: Array,
       default: () => []
+    },
+    paymentData: {
+      type: Object,
+      default: () => ({})
+    },
+    notesData: {
+      type: Object,
+      default: () => ({})
     }
   },
   setup(props) {
@@ -123,9 +156,21 @@ export default {
     // Date d'échéance (30 jours)
     const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR');
 
-    // Calculs financiers
+    // Formater les dates
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      try {
+        return new Date(dateString).toLocaleDateString('fr-FR');
+      } catch {
+        return dateString;
+      }
+    };
+
+    // Calculs financiers basés sur invoiceItems
     const subtotal = computed(() => {
-      return props.cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      return props.invoiceItems.reduce((sum, item) => {
+        return sum + ((item.unitPrice || 0) * (item.quantity || 0));
+      }, 0);
     });
 
     const tax = computed(() => {
@@ -151,7 +196,8 @@ export default {
       subtotal,
       tax,
       total,
-      formatCurrency
+      formatCurrency,
+      formatDate
     };
   }
 }

@@ -30,28 +30,21 @@
         v-model="invoiceDetailsData"
       />
 
+      <accordionForm
+        title="Articles de la facture"
+        v-model="invoiceItems"
+      />
+
       <Accordion
-        title="Payment Details"
+        title="Détails du paiement"
         :fields="paymentDetailsFields"
         v-model="paymentDetailsData"
       />
 
       <Accordion
-        title="Add Notes"
+        title="Notes supplementaires"
         :fields="notesFields"
         v-model="notesData"
-      />
-
-      <Accordion
-        title="Add Signature"
-        :fields="signatureFields"
-        v-model="signatureData"
-      />
-      
-      <Accordion
-        title="Email Details"
-        :fields="emailDetailsFields"
-        v-model="emailDetailsData"
       />
 
       <button class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">
@@ -76,6 +69,10 @@
       <invoicePreview
         :company-data="myDetailsData"
         :client-data="clientDetailsData"
+        :invoice-data="invoiceDetailsData"
+        :invoice-items="invoiceItems"
+        :payment-data="paymentDetailsData"
+        :notes-data="notesData"
       />
     </div>
 
@@ -83,16 +80,17 @@
 </template>
 
 <script lang="ts">
-import { ref, reactive } from 'vue';
-import Accordion from '@/components/tools/accordion.vue'; // Assurez-vous que le chemin est correct
+import { ref } from 'vue';
+import Accordion from '../tools/Accordion.vue';
 import invoicePreview from './invoicePreview.vue';
-// L'import 'useInvoiceStore' n'était pas utilisé, je l'ai enlevé pour plus de clarté
+import accordionForm from '../tools/accordionForm.vue';
 
 export default {
   name: 'InvoiceGenerator',
   components: {
     Accordion,
-    invoicePreview
+    invoicePreview,
+    accordionForm
   },
   setup() {
     
@@ -102,12 +100,10 @@ export default {
     const invoiceDetailsData = ref({});
     const paymentDetailsData = ref({});
     const notesData = ref({});
-    const signatureData = ref({});
-    const emailDetailsData = ref({});
+    const invoiceItems = ref([]);
 
     // --- Définition des champs pour chaque accordéon ---
 
-    // Basé sur la section "From" de l'image
     const myDetailsFields = [
       [
         { name: 'companyName', label: 'Your Name / Company Name', placeholder: 'Washim Chowdhury', span: 1 },
@@ -125,7 +121,6 @@ export default {
       ]
     ];
 
-    // Basé sur la section "To" de l'image
     const clientDetailsFields = [
       [
         { name: 'clientName', label: 'Client\'s Name', placeholder: 'Tony Stark', span: 1 },
@@ -140,7 +135,6 @@ export default {
       ]
     ];
 
-    // Basé sur les détails en haut de la facture
     const invoiceDetailsFields = [
       [
         { name: 'project', label: 'Project Name', placeholder: 'Fillo Product Design', span: 2 }
@@ -149,11 +143,8 @@ export default {
         { name: 'issuedDate', label: 'Issued Date', placeholder: 'Feb 15, 2025', type: 'date', span: 1 },
         { name: 'dueDate', label: 'Due Date', placeholder: 'Feb 20, 2025', type: 'date', span: 1 }
       ]
-      // Les articles (Web & App Design) nécessiteraient un composant plus complexe 
-      // que l'accordéon ne le permet.
     ];
 
-    // Basé sur le pied de page de la facture
     const paymentDetailsFields = [
       [
         { name: 'method', label: 'Payment Method', placeholder: 'BFT Bank Transfer', span: 1 },
@@ -165,29 +156,10 @@ export default {
       ]
     ];
     
-    // Basé sur le pied de page de la facture
     const notesFields = [
       [
         { name: 'note', label: 'Note', placeholder: 'There will be a late payment fee...', type: 'text', span: 1 },
         { name: 'gstNote', label: 'GST Note', placeholder: 'Note: GST will be paid by me, Tony Stark.', type: 'text', span: 1 }
-      ]
-    ];
-    
-    // Placeholder pour la signature
-    const signatureFields = [
-      [
-        { name: 'signatureName', label: 'Signatory Name', placeholder: 'Washim Chowdhury', span: 1 }
-        // L'ajout d'une image de signature nécessiterait un champ de type 'file'
-      ]
-    ];
-    
-    // Champs génériques pour l'envoi d'email
-    const emailDetailsFields = [
-      [
-        { name: 'subject', label: 'Email Subject', placeholder: 'Invoice #[12346] from Washim Chowdhury', span: 1 }
-      ],
-      [
-        { name: 'body', label: 'Email Body', placeholder: 'Hi Tony, Please find attached...', type: 'text', span: 1 }
       ]
     ];
 
@@ -197,15 +169,12 @@ export default {
       invoiceDetailsData,
       paymentDetailsData,
       notesData,
-      signatureData,
-      emailDetailsData,
       myDetailsFields,
       clientDetailsFields,
       invoiceDetailsFields,
       paymentDetailsFields,
       notesFields,
-      signatureFields,
-      emailDetailsFields
+      invoiceItems,
     };
   }
 }
