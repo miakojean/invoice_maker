@@ -1,162 +1,211 @@
 <template>
-  <main class="w-full min-h-screen bg-gray-50 p-8 flex justify-center items-center gap-2">
-    <div class="w-full flex flex-col justify-items-start gap-4 ">
+  <main class="w-full min-h-screen bg-gray-50 p-8 flex justify-center items-start gap-8">
 
-      <h2 class="text-3xl font-extrabold">Créer une nouvelle facture</h2>
+    <div class="w-full max-w-lg flex flex-col justify-items-start items-start gap-4">
 
-      <p class="font-semibold">Complétez les champs pour générer votre facture</p>
+      <h2 class="text-3xl font-extrabold">Create New Invoice</h2>
+      
+      <p class="font-semibold text-gray-700">Fill in invoice details</p>
 
-      <p class="text-xs font-extralight">
+      <p class="text-xs font-light text-gray-500 bg-gray-100 p-2 rounded-md">
         <i class="ri-error-warning-line"></i>
-        Vous pouvez enregistrer une facture en tant que brouillon et la terminer après
+        You can save unfinished invoice as draft and complete later.
       </p>
 
       <Accordion
-            title="Mes informations personnelles"
-            :fields="personalFields"
-            v-model="personalData"
-        />
+        title="Détails de mon entreprise"
+        :fields="myDetailsFields"
+        v-model="myDetailsData"
+      />
 
-        <!-- Informations de facturation -->
-        <Accordion
-            title="Informations de facturation"
-            :fields="billingFields"
-            v-model="billingData"
-        />
+      <Accordion
+        title="Détails du clients"
+        :fields="clientDetailsFields"
+        v-model="clientDetailsData"
+      />
 
-        <!-- Informations de livraison -->
-        <Accordion
-            title="Informations de livraison"
-            :fields="shippingFields"
-            v-model="shippingData"
-        />
+      <Accordion
+        title="Details de la facture"
+        :fields="invoiceDetailsFields"
+        v-model="invoiceDetailsData"
+      />
+
+      <Accordion
+        title="Payment Details"
+        :fields="paymentDetailsFields"
+        v-model="paymentDetailsData"
+      />
+
+      <Accordion
+        title="Add Notes"
+        :fields="notesFields"
+        v-model="notesData"
+      />
+
+      <Accordion
+        title="Add Signature"
+        :fields="signatureFields"
+        v-model="signatureData"
+      />
+      
+      <Accordion
+        title="Email Details"
+        :fields="emailDetailsFields"
+        v-model="emailDetailsData"
+      />
+
+      <button class="w-full bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors">
+        Save Invoice
+      </button>
+
     </div>
+
     <div class="w-full">
-      <h2>Preview</h2>
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <span class="text-lg font-semibold">Preview</span>
+          <a href="#" class="ml-4 text-sm text-blue-600 hover:underline">PDF</a>
+          <a href="#" class="ml-2 text-sm text-blue-600 hover:underline">Email</a>
+          <a href="#" class="ml-2 text-sm text-blue-600 hover:underline">Online Payment</a>
+        </div>
+        <button class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">
+          Save Invoice
+        </button>
+      </div>
+      
+      <invoicePreview
+        :company-data="myDetailsData"
+        :client-data="clientDetailsData"
+      />
     </div>
+
   </main>
 </template>
 
-<script>
+<script lang="ts">
 import { ref, reactive } from 'vue';
-import Accordion from '@/components/tools/accordion.vue';
-import { useInvoiceStore } from '@/stores/invoicecartstore';
+import Accordion from '@/components/tools/accordion.vue'; // Assurez-vous que le chemin est correct
+import invoicePreview from './invoicePreview.vue';
+// L'import 'useInvoiceStore' n'était pas utilisé, je l'ai enlevé pour plus de clarté
 
 export default {
   name: 'InvoiceGenerator',
   components: {
-    Accordion
+    Accordion,
+    invoicePreview
   },
   setup() {
-    const store = useInvoiceStore();
+    
+    // Données réactives pour chaque section de l'accordéon
+    const myDetailsData = ref({});
+    const clientDetailsData = ref({});
+    const invoiceDetailsData = ref({});
+    const paymentDetailsData = ref({});
+    const notesData = ref({});
+    const signatureData = ref({});
+    const emailDetailsData = ref({});
 
-    // Données réactives
-    const personalData = ref({});
-    const billingData = ref({});
-    const shippingData = ref({});
+    // --- Définition des champs pour chaque accordéon ---
 
-    // Configuration des champs pour les informations personnelles
-    const personalFields = [
+    // Basé sur la section "From" de l'image
+    const myDetailsFields = [
       [
-        {
-          name: 'companyName',
-          label: 'Nom de mon entreprise',
-          placeholder: 'Entrer le nom de l\'entreprise',
-          type: 'text',
-          span: 1
-        },
-        {
-          name: 'email',
-          label: 'Mon émail',
-          placeholder: 'Entrer l\'email de l\'entreprise',
-          type: 'email',
-          span: 1
-        }
+        { name: 'companyName', label: 'Your Name / Company Name', placeholder: 'Washim Chowdhury', span: 1 },
+        { name: 'email', label: 'Your Email', placeholder: 'washim@gmail.com', type: 'email', span: 1 }
       ],
       [
-        {
-          name: 'phone',
-          label: 'Téléphone',
-          placeholder: 'Entrer numéro de téléphone',
-          type: 'tel',
-          span: 1
-        },
-        {
-          name: 'address',
-          label: 'Adresse',
-          placeholder: 'Entrer adresse',
-          type: 'text',
-          span: 1
-        }
+        { name: 'address', label: 'Your Address', placeholder: 'Zindabazar, Sylhet, Bangladesh', span: 2 }
+      ],
+      [
+        { name: 'phone', label: 'Your Phone', placeholder: '+88 01729 214 992', type: 'tel', span: 1 },
+        { name: 'website', label: 'Your Website', placeholder: 'washim.com', type: 'text', span: 1 }
+      ],
+      [
+        { name: 'abn', label: 'ABN / Tax ID', placeholder: 'ABN 12345', span: 1 }
       ]
     ];
 
-    // Configuration des champs pour la facturation
-    const billingFields = [
+    // Basé sur la section "To" de l'image
+    const clientDetailsFields = [
       [
-        {
-          name: 'clientName',
-          label: 'Nom du client',
-          placeholder: 'Nom complet du client',
-          type: 'text',
-          span: 1
-        },
-        {
-          name: 'clientEmail',
-          label: 'Email du client',
-          placeholder: 'email@client.com',
-          type: 'email',
-          span: 1
-        }
+        { name: 'clientName', label: 'Client\'s Name', placeholder: 'Tony Stark', span: 1 },
+        { name: 'clientEmail', label: 'Client\'s Email', placeholder: 'tony@gmail.com', type: 'email', span: 1 }
       ],
       [
-        {
-          name: 'clientAddress',
-          label: 'Adresse du client',
-          placeholder: 'Adresse complète du client',
-          type: 'text',
-          span: 2
-        }
+        { name: 'clientAddress', label: 'Client\'s Address', placeholder: 'Mirabazar, Sylhet, Bangladesh', span: 2 }
+      ],
+      [
+        { name: 'clientPhone', label: 'Client\'s Phone', placeholder: '(208) 234-22455', type: 'tel', span: 1 },
+        { name: 'clientWebsite', label: 'Client\'s Website', placeholder: 'tonystark.com', type: 'text', span: 1 }
       ]
     ];
 
-    // Configuration des champs pour la livraison
-    const shippingFields = [
+    // Basé sur les détails en haut de la facture
+    const invoiceDetailsFields = [
       [
-        {
-          name: 'shippingAddress',
-          label: 'Adresse de livraison',
-          placeholder: 'Adresse de livraison',
-          type: 'text',
-          span: 1
-        },
-        {
-          name: 'shippingDate',
-          label: 'Date de livraison',
-          placeholder: 'JJ/MM/AAAA',
-          type: 'date',
-          span: 1
-        }
+        { name: 'project', label: 'Project Name', placeholder: 'Fillo Product Design', span: 2 }
       ],
       [
-        {
-          name: 'shippingNotes',
-          label: 'Notes de livraison',
-          placeholder: 'Instructions spéciales...',
-          type: 'text',
-          span: 2
-        }
+        { name: 'issuedDate', label: 'Issued Date', placeholder: 'Feb 15, 2025', type: 'date', span: 1 },
+        { name: 'dueDate', label: 'Due Date', placeholder: 'Feb 20, 2025', type: 'date', span: 1 }
+      ]
+      // Les articles (Web & App Design) nécessiteraient un composant plus complexe 
+      // que l'accordéon ne le permet.
+    ];
+
+    // Basé sur le pied de page de la facture
+    const paymentDetailsFields = [
+      [
+        { name: 'method', label: 'Payment Method', placeholder: 'BFT Bank Transfer', span: 1 },
+        { name: 'accountName', label: 'Account Name', placeholder: 'Washim Chowdhury', span: 1 }
+      ],
+      [
+        { name: 'accountNumber', label: 'Account Number', placeholder: '991198345445123', span: 1 },
+        { name: 'code', label: 'Code (e.g., Swift)', placeholder: '123456', span: 1 }
+      ]
+    ];
+    
+    // Basé sur le pied de page de la facture
+    const notesFields = [
+      [
+        { name: 'note', label: 'Note', placeholder: 'There will be a late payment fee...', type: 'text', span: 1 },
+        { name: 'gstNote', label: 'GST Note', placeholder: 'Note: GST will be paid by me, Tony Stark.', type: 'text', span: 1 }
+      ]
+    ];
+    
+    // Placeholder pour la signature
+    const signatureFields = [
+      [
+        { name: 'signatureName', label: 'Signatory Name', placeholder: 'Washim Chowdhury', span: 1 }
+        // L'ajout d'une image de signature nécessiterait un champ de type 'file'
+      ]
+    ];
+    
+    // Champs génériques pour l'envoi d'email
+    const emailDetailsFields = [
+      [
+        { name: 'subject', label: 'Email Subject', placeholder: 'Invoice #[12346] from Washim Chowdhury', span: 1 }
+      ],
+      [
+        { name: 'body', label: 'Email Body', placeholder: 'Hi Tony, Please find attached...', type: 'text', span: 1 }
       ]
     ];
 
     return {
-      store,
-      personalData,
-      billingData,
-      shippingData,
-      personalFields,
-      billingFields,
-      shippingFields
+      myDetailsData,
+      clientDetailsData,
+      invoiceDetailsData,
+      paymentDetailsData,
+      notesData,
+      signatureData,
+      emailDetailsData,
+      myDetailsFields,
+      clientDetailsFields,
+      invoiceDetailsFields,
+      paymentDetailsFields,
+      notesFields,
+      signatureFields,
+      emailDetailsFields
     };
   }
 }

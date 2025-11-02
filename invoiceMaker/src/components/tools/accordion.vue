@@ -2,14 +2,12 @@
     <div class="accordion-container">
         <div class="collapse collapse-plus bg-base-100 border border-base-300">
             <input type="checkbox" v-model="isOpen" />
-            <div class="collapse-title font-medium text-lg flex justify-between items-center">
-                <span>{{ title }}</span>
-                <i class="ri-arrow-down-s-line transition-transform duration-300" 
-                   :class="{'rotate-180': isOpen}"></i>
+            <div class="collapse-title flex justify-between items-center">
+                <span class="text-base font-light">{{ title }}</span>
             </div>
             <div class="collapse-content text-sm w-full flex flex-col gap-4">
                 <div v-for="(row, rowIndex) in fields" :key="rowIndex" class="w-full flex gap-4">
-                    <div 
+                    <div
                         v-for="field in row" 
                         :key="field.name"
                         :class="getFieldClass(field)"
@@ -106,6 +104,9 @@ export default defineComponent({
     transform: rotate(180deg);
 }
 
+.accordion-container{
+    min-width: 500px;
+}
 /* Classes pour les spans personnalisés */
 .flex-1 { flex: 1; }
 .flex-2 { flex: 2; }
