@@ -1,10 +1,13 @@
 <template>
-  <fieldset class="fieldset">
-    <legend class="fieldset-legend">{{ label }}</legend>
+  <fieldset class="fieldset w-full">
+    <legend class="fieldset-legend text-sm font-medium text-gray-500">{{ label }}</legend>
     <input 
       :type="inputType" 
-      class="input" 
+      class="input w-full" 
       :placeholder="placeholder"
+      :value="modelValue"
+      @input="updateValue"
+      :min="inputType === 'number' ? 0 : undefined"
     />
   </fieldset>
 </template>
@@ -17,7 +20,7 @@ export default defineComponent({
   
   props: {
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     label:{
@@ -38,7 +41,15 @@ export default defineComponent({
   setup(props, { emit }) {
     const updateValue = (event: Event) => {
       const target = event.target as HTMLInputElement;
-      emit('update:modelValue', target.value);
+      
+      if (props.inputType === 'number') {
+        // Pour les nombres, convertir en number et gérer la valeur minimale
+        const value = target.value === '' ? '' : Math.max(0, Number(target.value));
+        emit('update:modelValue', value);
+      } else {
+        // Pour les autres types, garder la valeur en string
+        emit('update:modelValue', target.value);
+      }
     };
 
     return {
@@ -49,4 +60,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.input[type="number"]::-webkit-outer-spin-button,
+.input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield;
+}
 </style>
