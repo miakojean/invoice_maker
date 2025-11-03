@@ -1,7 +1,7 @@
 <template>
-  <button class="btn">
-    <span class="loading loading-spinner" v-if="isLoading === true"></span>
-        {{ label }}
+    <button class="btn">
+        <span class="loading loading-spinner" v-if="isLoading === true"></span>
+        <span v-if="isLoading === false">{{ label }}</span>
     </button>
 </template>
 
@@ -26,5 +26,6 @@ export default {
 .btn{
     background: #a1e1ff;
     border: none;
+    min-width: 200px;
 }
 </style>

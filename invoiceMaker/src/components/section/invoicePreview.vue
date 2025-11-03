@@ -23,18 +23,14 @@
           <div class="flex flex-col gap-2">
             <h3 class="font-semibold text-gray-500 mb-2">CLIENT</h3>
             <p class="text-lg font-semibold">{{ clientData.clientName || 'Nom du client' }}</p>
-            <p class="text-gray-600">{{ clientData.clientEmail || 'email@client.com' }}</p>
-            <p class="text-gray-600">{{ clientData.clientAddress || 'Adresse du client' }}</p>
-            <p class="text-gray-600">{{ clientData.clientPhone || 'Téléphone non renseigné' }}</p>
+            <p class="text-gray-600 text-sm">{{ clientData.clientEmail || 'Email non fourni' }}</p>
+            <p class="text-gray-600 text-sm">{{ clientData.clientAddress || 'Adresse du client' }}</p>
+            <p class="text-gray-600 text-sm">{{ clientData.clientPhone || 'Téléphone non renseigné' }}</p>
           </div>
           
           <div class="text-right">
-            <h3 class="font-semibold text-gray-500 mb-2">DATE</h3>
+            <h3 class="font-semibold text-gray-500 mb-2">Date</h3>
             <p class="text-lg">{{ formatDate(invoiceData.issuedDate) || currentDate }}</p>
-            <div class="mt-4">
-              <h3 class="font-semibold text-gray-500 mb-2">ÉCHÉANCE</h3>
-              <p class="text-lg">{{ formatDate(invoiceData.dueDate) || dueDate }}</p>
-            </div>
           </div>
         </div>
       </div>
@@ -44,9 +40,9 @@
         <table class="w-full">
           <thead>
             <tr class="border-b-2 border-gray-300">
-              <th class="text-left pb-4 font-semibold text-gray-500">DESCRIPTION</th>
-              <th class="text-center pb-4 font-semibold text-gray-500">QUANTITÉ</th>
-              <th class="text-right pb-4 font-semibold text-gray-500">PRIX UNITAIRE</th>
+              <th class="text-left pb-4 font-semibold text-gray-500">Description</th>
+              <th class="text-center pb-4 font-semibold text-gray-500">Quantité</th>
+              <th class="text-right pb-4 font-semibold text-gray-500">Prix unitaire</th>
               <th class="text-right pb-4 font-semibold text-gray-500">TOTAL</th>
             </tr>
           </thead>
@@ -185,7 +181,7 @@ export default {
     const formatCurrency = (amount) => {
       return new Intl.NumberFormat('fr-FR', {
         style: 'currency',
-        currency: 'EUR'
+        currency: 'XOF'
       }).format(amount);
     };
 

@@ -48,7 +48,7 @@
                         />
                     </div>
                     <div class="flex-1 text-right font-semibold text-gray-700">
-                        {{ calculateItemTotal(item) }} €
+                        {{ calculateItemTotal(item) }} FCFA
                     </div>
                     <div class="w-8">
                         <button 
@@ -74,15 +74,15 @@
                     <div class="w-64 space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Sous-total:</span>
-                            <span class="font-semibold">{{ calculateSubtotal() }} €</span>
+                            <span class="font-semibold">{{ calculateSubtotal() }} FCFA</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">TVA (20%):</span>
-                            <span class="font-semibold">{{ calculateTax() }} €</span>
+                            <span class="font-semibold">{{ calculateTax() }} FCFA</span>
                         </div>
                         <div class="flex justify-between border-t pt-2">
                             <span class="text-gray-800 font-bold">Total:</span>
-                            <span class="text-blue-600 font-bold text-lg">{{ calculateTotal() }} €</span>
+                            <span class="text-blue-600 font-bold text-lg">{{ calculateTotal() }} FCFA</span>
                         </div>
                     </div>
                 </div>
