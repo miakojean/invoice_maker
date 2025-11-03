@@ -28,7 +28,7 @@ export const useInvoiceStore = defineStore('invoice', () => {
 
         if (existingItemIndex !== -1) {
             // Si l'item existe déjà, on met à jour la quantité
-            cartItems.value[existingItemIndex].quantity += itemWithId.quantity;
+            cartItems.value[existingItemIndex]!.quantity += itemWithId.quantity;
         } else {
             // Sinon, on ajoute le nouvel item
             cartItems.value.push(itemWithId);

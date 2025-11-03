@@ -68,6 +68,6 @@ export default defineComponent({
 }
 
 .input[type="number"] {
-  -moz-appearance: textfield;
+  --moz-appearance: textfield;
 }
 </style>
