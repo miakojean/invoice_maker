@@ -14,19 +14,19 @@
         Vous pouvez enregistrer une facture inachevée comme brouillon et la compléter plus tard.
       </p>
 
-      <Accordion
+      <accordion
         title="Détails de mon entreprise"
         :fields="myDetailsFields"
         v-model="myDetailsData"
       />
 
-      <Accordion
+      <accordion
         title="Détails du client"
         :fields="clientDetailsFields"
         v-model="clientDetailsData"
       />
 
-      <Accordion
+      <accordion
         title="Détails de la facture"
         :fields="invoiceDetailsFields"
         v-model="invoiceDetailsData"
@@ -37,13 +37,13 @@
         v-model="invoiceItems"
       />
 
-      <Accordion
+      <accordion
         title="Détails du paiement"
         :fields="paymentDetailsFields"
         v-model="paymentDetailsData"
       />
 
-      <Accordion
+      <accordion
         title="Notes supplémentaires"
         :fields="notesFields"
         v-model="notesData"
@@ -94,7 +94,7 @@
 
 <script lang="ts">
 import { ref } from 'vue';
-import Accordion from '../tools/Accordion.vue';
+import accordion from '../tools/accordion.vue';
 import invoicePreview from './invoicePreview.vue';
 import accordionForm from '../tools/accordionForm.vue';
 import mainButton from '../button/mainButton.vue'
@@ -104,7 +104,7 @@ import stepper from '../tools/stepper.vue';
 export default {
   name: 'GenerateurFacture',
   components: {
-    Accordion,
+    accordion,
     invoicePreview,
     accordionForm,
     mainButton,
