@@ -1,7 +1,9 @@
 <template>
   <main class="w-full min-h-screen bg-gray-50 p-8 flex justify-center items-start gap-8">
 
-    <div class="w-full max-w-lg flex flex-col justify-items-start items-start gap-4">
+    <!-- Formulaire - 100% quand caché, 40% quand visible -->
+    <div class="flex flex-col justify-items-start items-start gap-4 transition-all duration-300 ease-in-out"
+         :class="isVisible ? 'w-2/5 max-w-md' : 'w-full max-w-lg'">
 
       <h2 class="text-3xl font-extrabold">Créer une nouvelle facture</h2>
       
@@ -55,29 +57,36 @@
 
     </div>
 
-    <div class="w-full">
-      <div class="flex justify-between items-center mb-4">
-        <div>
-          <span class="text-lg font-semibold">Aperçu</span>
-          <a href="#" class="ml-4 text-sm text-blue-600 hover:underline">PDF</a>
-          <a href="#" class="ml-2 text-sm text-blue-600 hover:underline">Email</a>
-          <a href="#" class="ml-2 text-sm text-blue-600 hover:underline">Paiement en ligne</a>
-        </div>
+    <!-- Aperçu - 0% quand caché, 60% quand visible -->
+    <div class="transition-all duration-300 ease-in-out overflow-hidden"
+         :class="isVisible ? 'w-3/5' : 'w-0'">
+      
+      <div class="flex justify-start items-center gap-4 mb-4 pl-4" v-if="isVisible">
+        <iconButton @click="isVisible = !isVisible"/>
         <mainButton 
-          label="Enregistrer la facture" 
+          label="Télécharger la facture" 
           @click="simulationApi"
           :isLoading="isLoading"
         />
       </div>
-      
-      <invoicePreview
-        :company-data="myDetailsData"
-        :client-data="clientDetailsData"
-        :invoice-data="invoiceDetailsData"
-        :invoice-items="invoiceItems"
-        :payment-data="paymentDetailsData"
-        :notes-data="notesData"
-      />
+
+      <transition name="fade">
+        <div v-if="isVisible" class="pl-4">
+          <invoicePreview
+            :company-data="myDetailsData"
+            :client-data="clientDetailsData"
+            :invoice-data="invoiceDetailsData"
+            :invoice-items="invoiceItems"
+            :payment-data="paymentDetailsData"
+            :notes-data="notesData"
+          />
+        </div>
+      </transition>
+    </div>
+
+    <!-- Bouton flottant TOUJOURS visible -->
+    <div class="fixed top-24 right-8 z-10" v-if="!isVisible">
+      <iconButton @click="isVisible = !isVisible"/>
     </div>
 
   </main>
@@ -89,6 +98,8 @@ import Accordion from '../tools/Accordion.vue';
 import invoicePreview from './invoicePreview.vue';
 import accordionForm from '../tools/accordionForm.vue';
 import mainButton from '../button/mainButton.vue'
+import iconButton from '../button/iconButton.vue';
+import stepper from '../tools/stepper.vue';
 
 export default {
   name: 'GenerateurFacture',
@@ -96,7 +107,9 @@ export default {
     Accordion,
     invoicePreview,
     accordionForm,
-    mainButton
+    mainButton,
+    stepper,
+    iconButton
   },
   setup() {
     
@@ -108,6 +121,8 @@ export default {
     const notesData = ref({});
     const invoiceItems = ref([]);
     const isLoading = ref(false);
+
+    const isVisible = ref(false);
 
     // --- Définition des champs pour chaque accordéon ---
 
@@ -173,12 +188,13 @@ export default {
     const simulationApi = () => {
       isLoading.value = true;
       setTimeout(()=>{
-        alert("Simulation résussie, vous pouvez ressayer");
+        alert("Simulation réussie, vous pouvez réessayer");
         isLoading.value = false
       }, 2000)
     }
 
     return {
+      isVisible,
       isLoading,
       myDetailsData,
       clientDetailsData,
@@ -199,5 +215,24 @@ export default {
 </script>
 
 <style scoped>
-/* Styles personnalisés si nécessaires */
+/* Transition pour l'aperçu */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.fade-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Transition smooth pour le changement de largeur */
+.transition-all {
+  transition: all 0.3s ease-in-out;
+}
 </style>
